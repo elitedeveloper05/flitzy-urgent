@@ -183,7 +183,6 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
 
   const renderContent = () => {
     if (selectedTab === 'services') {
-      // Move the product list to the services section
       const servicesByCategory = services?.filter((service) => {
         return service.category?.includes(selectedCategory);
       });
@@ -233,7 +232,6 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
         </ScrollView>
       );
     } else {
-      // For the Products section, show the "No products available" message
       return (
         <View
           style={{
