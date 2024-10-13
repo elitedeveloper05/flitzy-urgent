@@ -10,7 +10,7 @@ export const ENDPOINTS = {
     products: 'api/products',
     promocode: 'api/promocode',
     promocodes: 'api/promocodes',
-    categories: 'api/categories', 
+    categories: 'api/categories',
   },
   post: {
     order: 'api/order/create',
