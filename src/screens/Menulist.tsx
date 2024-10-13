@@ -25,9 +25,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
 
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(category || '');
-  const [selectedTab, setSelectedTab] = useState<'services' | 'products'>(
-    'services'
-  );
+  const [selectedTab, setSelectedTab] = useState<'services' | 'products'>('services');
 
   const {
     data: productsData,
@@ -42,6 +40,33 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
 
   const services = productsData instanceof Array ? productsData : [];
   const categories = categoriesData instanceof Array ? categoriesData : [];
+
+  // Cart state
+  const [cart, setCart] = useState<{[key: string]: number}>({});
+
+  // Functions to manage cart
+  const addToCart = (itemId: string) => {
+    setCart(prevCart => ({
+      ...prevCart,
+      [itemId]: (prevCart[itemId] || 0) + 1,
+    }));
+  };
+
+  const removeFromCart = (itemId: string) => {
+    setCart(prevCart => {
+      const currentQuantity = prevCart[itemId] || 0;
+      if (currentQuantity <= 1) {
+        const newCart = {...prevCart};
+        delete newCart[itemId];
+        return newCart;
+      } else {
+        return {
+          ...prevCart,
+          [itemId]: currentQuantity - 1,
+        };
+      }
+    });
+  };
 
   if (loading) {
     return <components.Loader />;
@@ -142,10 +167,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
         >
           <Text
             style={{
-              color:
-                selectedTab === 'services'
-                  ? theme.colors.mainTurquoise
-                  : theme.colors.textColor,
+              color: selectedTab === 'services' ? theme.colors.mainTurquoise : theme.colors.textColor,
               ...theme.fonts.DMSans_400Regular,
               fontSize: 16,
             }}
@@ -166,10 +188,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
         >
           <Text
             style={{
-              color:
-                selectedTab === 'products'
-                  ? theme.colors.mainTurquoise
-                  : theme.colors.textColor,
+              color: selectedTab === 'products' ? theme.colors.mainTurquoise : theme.colors.textColor,
               ...theme.fonts.DMSans_400Regular,
               fontSize: 16,
             }}
@@ -183,9 +202,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
 
   const renderContent = () => {
     if (selectedTab === 'services') {
-      const servicesByCategory = services?.filter((service) => {
-        return service.category?.includes(selectedCategory);
-      });
+      const servicesByCategory = services?.filter(service => service.category?.includes(selectedCategory));
 
       if (servicesByCategory.length === 0) {
         return (
@@ -221,11 +238,15 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
         >
           {servicesByCategory?.map((item, index, array) => {
             const lastItem = index === array.length - 1;
+            const quantity = cart[item.id] || 0; // Get quantity from cart
             return (
               <components.MenuListItem
                 item={item}
                 lastItem={lastItem}
                 key={item.id}
+                quantity={quantity} // Pass the quantity to MenuListItem
+                onAdd={() => addToCart(item.id)} // Pass add function
+                onRemove={() => removeFromCart(item.id)} // Pass remove function
               />
             );
           })}

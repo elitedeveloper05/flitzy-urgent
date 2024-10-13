@@ -135,7 +135,7 @@ const Product: React.FC<Props> = ({route}): JSX.Element => {
           containerStyle={{marginBottom: 14}}
           onPress={() => {
             dispatch(addToCart(item));
-            addedToCartMessage(item);
+            addedToCartMessage(item); 
           }}
         />
         <components.Button
