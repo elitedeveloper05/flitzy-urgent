@@ -40,7 +40,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
     isLoading: categoriesLoading,
   } = useGetCategoriesQuery();
 
-  const dishes = productsData instanceof Array ? productsData : [];
+  const services = productsData instanceof Array ? productsData : [];
   const categories = categoriesData instanceof Array ? categoriesData : [];
 
   if (loading) {
@@ -131,30 +131,6 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
         }}
       >
         <TouchableOpacity
-          onPress={() => setSelectedTab('products')}
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            paddingVertical: 10,
-            borderBottomWidth: selectedTab === 'products' ? 2 : 0,
-            borderColor: theme.colors.mainTurquoise,
-          }}
-        >
-          <Text
-            style={{
-              color:
-                selectedTab === 'products'
-                  ? theme.colors.mainTurquoise
-                  : theme.colors.textColor,
-              ...theme.fonts.DMSans_400Regular,
-              fontSize: 16,
-            }}
-          >
-            Products
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
           onPress={() => setSelectedTab('services')}
           style={{
             flex: 1,
@@ -177,15 +153,65 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
             Services
           </Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => setSelectedTab('products')}
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            paddingVertical: 10,
+            borderBottomWidth: selectedTab === 'products' ? 2 : 0,
+            borderColor: theme.colors.mainTurquoise,
+          }}
+        >
+          <Text
+            style={{
+              color:
+                selectedTab === 'products'
+                  ? theme.colors.mainTurquoise
+                  : theme.colors.textColor,
+              ...theme.fonts.DMSans_400Regular,
+              fontSize: 16,
+            }}
+          >
+            Products
+          </Text>
+        </TouchableOpacity>
       </View>
     );
   };
 
   const renderContent = () => {
-    if (selectedTab === 'products') {
-      const dishesByCategory = dishes?.filter((dish) => {
-        return dish.category?.includes(selectedCategory);
+    if (selectedTab === 'services') {
+      // Move the product list to the services section
+      const servicesByCategory = services?.filter((service) => {
+        return service.category?.includes(selectedCategory);
       });
+
+      if (servicesByCategory.length === 0) {
+        return (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingHorizontal: 20,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 18,
+                color: theme.colors.textColor,
+                textAlign: 'center',
+                ...theme.fonts.DMSans_400Regular,
+              }}
+            >
+              No services are available at your location
+            </Text>
+          </View>
+        );
+      }
+
       return (
         <ScrollView
           contentContainerStyle={{
@@ -194,7 +220,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
           }}
           showsVerticalScrollIndicator={false}
         >
-          {dishesByCategory?.map((item, index, array) => {
+          {servicesByCategory?.map((item, index, array) => {
             const lastItem = index === array.length - 1;
             return (
               <components.MenuListItem
@@ -207,6 +233,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
         </ScrollView>
       );
     } else {
+      // For the Products section, show the "No products available" message
       return (
         <View
           style={{
@@ -224,7 +251,7 @@ const Menulist: React.FC<Props> = ({route}): JSX.Element => {
               ...theme.fonts.DMSans_400Regular,
             }}
           >
-            No services are available at your location
+            No products are available from this nursery
           </Text>
         </View>
       );
